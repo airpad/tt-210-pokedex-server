@@ -1,5 +1,6 @@
 
 const Pokemon = require("../models/pokemon")
+const {fetchPokemon} = require("../services/fetch")
 
 exports.avistarPokemonPorId = async (req,res) =>{
     try {
@@ -19,7 +20,8 @@ exports.avistarPokemonPorId = async (req,res) =>{
         if(!pokemon){
             return res.status(404).json({message:"Pokemon no encontrado"})
         }
-        res.status(200).json(pokemon)
+        const pokemonData = await fetchPokemon(id_pokemon,pokemon)
+        res.status(200).json(pokemonData)
     } catch (error) {
         res.status(500).json({error:error.message})
     }
@@ -45,7 +47,8 @@ exports.catchPokemonById = async (req,res)=>{
             if(!pokemon){
                 return res.status(404).json({message:"Pokemon no encontrado"})
             }
-            res.status(200).json(pokemon)
+            const pokemonData = await fetchPokemon(id_pokemon,pokemon)
+            return res.status(200).json(pokemonData)
         }else{
             return res.status(400).json({message:"Bad pokemon status"})
         }
@@ -77,7 +80,8 @@ exports.inTeamPokemonById = async (req,res)=>{
             if(pokemon.in_team == pokemonStatusInTeam){
                 pokemon.in_team = !pokemonStatusInTeam
                 await pokemon.save()
-                res.status(200).json(pokemon)
+                const pokemonData = await fetchPokemon(id_pokemon,pokemon)
+                return res.status(200).json(pokemonData)
             }else{
                 return res.status(400).json({message:"Bad pokemon status"})
             }

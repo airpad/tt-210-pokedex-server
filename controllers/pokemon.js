@@ -1,6 +1,6 @@
 const pokemon = require("../models/pokemon")
 const Pokemon = require("../models/pokemon")
-
+const {fetchPokemon} = require("../services/fetch")
 exports.saludoEntrenador = async (req,res)=>{
     try {
         res.send("Hola entrenador ahora desde el controlador")
@@ -32,11 +32,23 @@ exports.obtenerPokemon = async (req,res) =>{
 exports.obtenerPokemonPorIdPokemon = async (req,res)=>{
     try {
         const id_pokemon = req.params.id_pokemon
-        const pokemon = await Pokemon.findOne({"id_pokemon":id_pokemon})
+        let pokemon = await Pokemon.findOne({"id_pokemon":id_pokemon})
         if(!pokemon){
-            return res.status(404).json({"message":"Pokemon no encontrado"})
+            pokemon = {
+                id_pokemon:id_pokemon,
+                view:false,
+                catch:false,
+                in_team:false
+            }
+            const pokemonData = await fetchPokemon(id_pokemon,pokemon)
+            console.log(pokemonData)
+            return res.status(200).json(pokemonData)
         }
-        res.status(200).json(pokemon)
+        const pokemonData = await fetchPokemon(id_pokemon,pokemon)
+        if(!pokemonData){
+            return res.status(404).json({message:"Pokemon not found"})
+        }
+        res.status(200).json(pokemonData)
     } catch (error) {
         res.status(500).json({error:error.message})
     }
