@@ -1,5 +1,6 @@
 const express = require("express")
 const mongoose = require("mongoose")
+const cors = require("cors")
 require("dotenv").config()
 
 const pokemonRoutes = require("./routes/pokemon")
@@ -9,12 +10,14 @@ const port = 3000
 
 app.set("port",port)
 //Esta línea es muy importante porque nos permite interactuar con los JSON que enviamos, sin esta línea no sabemos trabajar con JSON
-app.use(express.json()) 
+app.use(express.json())
+app.use(cors())
 
-//Rutas
-app.get("/",(req,res)=>{
-    res.send("Hola entrenador")
+Rutas
+   app.get("/",(req,res)=>{
+        res.send("Hola entrenador")
 })
+
 app.use("/api/pokemon",pokemonRoutes)
 
 mongoose.connect(process.env.MONGO_URI)
